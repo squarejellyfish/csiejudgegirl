@@ -1,67 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int inc;
+typedef struct {
+    int val;
+    int idx;
+} Num;
+
+typedef struct {
+    int small;
+    int big;
+    int sum;
+} Group;
+
+int comp_num(const void *a, const void *b) {
+    return (*(Num *)a).val - (*(Num *)b).val;
+}
+int comp_group(const void *a, const void *b) {
+    Group m = *((Group *)a), n = *((Group *)b);
 #ifdef INC
-inc = 1;
+    if (m.sum != n.sum)
+        return m.sum - n.sum;
+    return m.small - n.small;
 #endif
-
 #ifdef DEC
-inc = 0;
+    if (m.sum != n.sum)
+        return n.sum - m.sum;
+    return n.big - m.big;
+#endif /* ifdef DEC */
+}
+
+Num nums[100000];
+Group groups[100000];
+void pairPrint(int numbers[], int n) {
+    for (int i = 0; i < n; i++) {
+        nums[i].val = numbers[i];
+        nums[i].idx = i;
+    }
+    qsort(nums, n, sizeof(Num), comp_num);
+    for (int i = 0; i < n / 2; i++) {
+        groups[i].sum = nums[i].val + nums[n - i - 1].val;
+        groups[i].small = nums[i].idx;
+        groups[i].big = nums[n - i - 1].idx;
+
+        if (groups[i].small > groups[i].big) {
+            int tmp = groups[i].small;
+            groups[i].small = groups[i].big;
+            groups[i].big = tmp;
+        }
+    }
+    qsort(groups, n / 2, sizeof(Group), comp_group);
+#ifdef INC
+    for (int i = 0; i < n / 2; i++) {
+        printf("%d = numbers[%d] + numbers[%d]\n", groups[i].sum,
+               groups[i].small, groups[i].big);
+    }
 #endif
-
-int comp(const void* p1, const void* p2) {
-    const int *a = *(const int**)p1;
-    const int *b = *(const int**)p2;
-    if (a[0] != b[0]) {
-        return a[0] - b[0];
-    }
-    return a[1] - b[1];
-}
-
-int comp_2d(const void* p1, const void* p2) {
-    const int *a = *(const int**)p1;
-    const int *b = *(const int**)p2;
-    if (a[0] != b[0]) {
-        return a[0] - b[0];
-    } else if (a[1] != b[1]) {
-        return a[1] - b[1];
-    }
-    return a[2] - b[2];
-}
- 
-void pairPrint(int numbers[], int n){
-    int **new = (int**)malloc(sizeof(int*)*n);
-    for (int i = 0; i < n; i++) {
-        new[i] = (int*)malloc(sizeof(int)*2);
-    }
-    for (int i = 0; i < n; i++) {
-        new[i][0] = numbers[i]; new[i][1] = i;
-    }
-    qsort(new, n, sizeof(new[0]), comp);
-//    for (int i = 0; i < n; i++) {
-//        printf("new[i] = {%d, %d}\n", new[i][0], new[i][1]);
-//    }
-    int **group = (int**)malloc(sizeof(int*)*(n / 2));
+#ifdef DEC
     for (int i = 0; i < n / 2; i++) {
-        group[i] = (int*)malloc(sizeof(int)*3);
+        printf("%d = numbers[%d] + numbers[%d]\n", groups[i].sum, groups[i].big,
+               groups[i].small);
     }
-    for (int i = 0; i < n / 2; i++) {
-        group[i][0] = new[i][0] + new[n - i - 1][0];
-        group[i][1] = new[i][1];
-        group[i][2] = new[n - i - 1][1];
-//        printf("group[i]: {%d, %d, %d}\n", group[i][0], group[i][1], group[i][2]);
-    }
-    qsort(group, n / 2, sizeof(group[0]), comp_2d);
-    if (inc) {
-        for (int i = 0; i < n / 2; i++) {
-            int* g = group[i];
-            printf("%d = numbers[%d] + numbers[%d]\n", group[i][0], (g[1] < g[2]) ? g[1] : g[2], (g[1] > g[2]) ? g[1] : g[2]);
-        }
-    } else {
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            int* g = group[i];
-            printf("%d = numbers[%d] + numbers[%d]\n", group[i][0], (g[1] < g[2]) ? g[2] : g[1], (g[1] > g[2]) ? g[2] : g[1]);
-        }
-    }
+#endif
 }
