@@ -6,7 +6,6 @@ int friend[128][128], sub[128] = {0};
 int n, m;
  
 int solve(int n, int cand[], int depth) {
-//    printf("searching %d, depth = %d\n", curr, depth);
     if (depth == m) {
         for (int i = 0; i < m; i++) printf("%d%c", sub[i], " \n"[i==m-1]);
         return 1;
