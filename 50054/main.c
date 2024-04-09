@@ -8,8 +8,8 @@ int S, N, Q;
 int hash(char word[128], int len) {
     int ret = 0;
     for (int i = 0; i < len; i++) {
-        if ((word[i] >= 'A' && word[i] <= 'Z') || (word[i] >= 'a' && word[i] <= 'z')) ret += word[i];
-        else if (word[i] >= '0' && word[i] <= '9') ret += word[i] - '0';
+        if (word[i] >= '0' && word[i] <= '9') ret += word[i] - '0';
+        else ret += word[i];
     }
     return ret % S;
 }
