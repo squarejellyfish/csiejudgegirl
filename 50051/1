@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int valid(char plate[8]) {
+    char char_count[128] = {0}, last = 0;
+    int has_digit = 0, sum_digit = 0;
+
+    for (int i = 0; i < 8; i++) {
+        if ((!isalpha(plate[i]) || !isdigit(plate[i])) && plate[i] != '-') return 0;
+
+        if (isdigit(plate[i])) {
+            has_digit = 1;
+            sum_digit += plate[i] - '0';
+        }
+
+        if (plate[i] == '4' && last = '4') return 0;
+
+        char_count[plate[i]]++;
+        if (char_count[plate[i]] > 2) return 0;
+        last = plate[i]
+    }
+
+    if (!has_digit || sum_digit % 7 == 0) return 0;
+    return 1;
+}
+int cmp(const void *p1, const void *p2) {
+    return strlen((char*)p1) - strlen((char*)p2);
+}
+
+int main() {
+    int N, c = 0;
+    scanf("%d", &N);
+
+    char plate[8], ans[32][8];
+    for (int i = 0; i < N; i++) {
+        scanf(" %s", plate);
+        if (valid(plate)) strcpy(ans[c++], plate);
+    }
+    qsort(ans, c, sizeof(char*8), cmp);
+    for (int i = 0; i < c; i++) printf("%s\n", ans[i]);
+
+    return 0;
+}
