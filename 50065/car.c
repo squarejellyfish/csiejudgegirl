@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 CarStatusList carSimulation(CarStatus car, Command commands[]) {
-    CarStatusList ret = *(CarStatusList*)malloc(sizeof(CarStatusList));
+    CarStatusList ret;
     ret.num = 0;
 
     int i = 0;
