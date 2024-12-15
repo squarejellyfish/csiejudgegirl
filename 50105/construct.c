@@ -1,43 +1,44 @@
 #include "construct.h"
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-/*
-typedef struct Node{
-    int value;
-    struct Node *left, *right;
-} Node;
-*/
-Node *link(int l, int r, int T[]) {
-    if (r - 1 < l) return NULL;
-    Node *root = (Node *)malloc(sizeof(Node));
-    root->value = T[r - 1];
-    root->right = NULL;
-    root->left = link(l, r - 1, T);
-    return root;
+// typedef struct Node{
+//     int value;
+//     struct Node *left, *right;
+// } Node;
+Node* link(int T[], int start, int end) {
+    if (end == start) return NULL;
+
+    Node* ret = (Node*)malloc(sizeof(Node));
+    ret->value = T[end - 1];
+    ret->left = link(T, start, end - 1);
+    ret->right = NULL;
+    return ret;
 }
 
-Node *construct(int l, int r, int T[]) {
-    if (r - l < 3) { // length < 3
-        return link(l, r, T);
+Node* construct(int T[], int start, int end) {
+    if (end - start < 3) {
+        return link(T, start, end);
     }
     int64_t weight = 0, sum = 0;
-    for (int i = l; i < r; i++) {
+    for (int i = start; i < end; i++) {
         weight += T[i] * i;
         sum += T[i];
     }
+
     if (weight % sum == 0) {
-        Node *root = (Node *)malloc(sizeof(Node));
-        int64_t mid = weight / sum;
-        root->value = T[mid];
-        root->left = construct(l, mid, T);
-        root->right = construct(mid + 1, r, T);
+        int idx = weight / sum;
+        Node* root = (Node*)malloc(sizeof(Node));
+        root->value = T[idx];
+        root->left = construct(T, start, idx);
+        root->right = construct(T, idx + 1, end);
         return root;
-    } else { // no balancing point
-        return link(l, r, T);
+    } else {
+        return link(T, start, end);
     }
 }
-
+ 
 Node *ConstructTree(int T[], int N) {
-    return construct(0, N, T);
+    return construct(T, 0, N);
 }
